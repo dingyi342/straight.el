@@ -2419,20 +2419,22 @@ is used as-is. Otherwise, an attempt is made to extract the
 repository name from the URL. This may still fail, and nil is
 then returned."
   (straight--with-plist recipe
-      (repo host)
-    (if host
-        (replace-regexp-in-string
-         "^.+/" "" repo)
-      ;; The following is a half-hearted attempt to turn arbitrary
-      ;; URLs into reasonable repository names.
-      (let ((regexp "^.*/\\(.+\\)\\.git$"))
-        ;; If this regexp does not match, just return nil.
-        (when (string-match regexp repo)
-          (match-string 1 repo))))))
+      (repo host repo-name)
+    (if repo-name
+        repo-name
+      (if host
+          (replace-regexp-in-string
+           "^.+/" "" repo)
+        ;; The following is a half-hearted attempt to turn arbitrary
+        ;; URLs into reasonable repository names.
+        (let ((regexp "^.*/\\(.+\\)\\.git$"))
+          ;; If this regexp does not match, just return nil.
+          (when (string-match regexp repo)
+            (match-string 1 repo)))))))
 
 (defun straight-vc-git-keywords ()
   "Return a list of keywords used by the VC backend for Git."
-  '(:repo :host :branch :remote :nonrecursive :upstream :fork :depth))
+  '(:repo :host :repo-name :branch :remote :nonrecursive :upstream :fork :depth))
 
 ;;;; Fetching repositories
 
